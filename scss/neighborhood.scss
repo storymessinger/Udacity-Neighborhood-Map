@@ -1,0 +1,137 @@
+.test {
+    border: 1px solid red;
+}
+.test2 {
+    background-color: purple;
+}
+
+// variables
+$sidebar-width: 15rem;
+
+// styles
+#pano {
+    width: 150px;
+    height: 150px;
+}
+html {
+    font-size: 16px;
+}
+
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+
+    header {
+        height: 5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem 0 2rem;
+        .sidebar_btn {
+            background: url("../imgs/ic_menu_white_36px.svg");
+            background-size: 30px 30px;
+            width:30px;
+            height:30px;
+        }
+        input {
+            width:50px;
+            transition: width 0.4s ease-in-out;
+        }
+        input:focus {
+            width: 200px;
+        }
+    }
+
+    .Basic-body {
+        display: flex;
+        flex: 1;
+
+        .google-map {
+            flex: 1;
+        }
+    }
+}
+
+// navigation sidebar
+sidebar {
+        position: absolute;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 100vh;
+        width: $sidebar-width;
+        left: -$sidebar-width;
+        z-index: 1001;
+        transition: left 0.15s ease-in;
+
+        .easyFilter {
+            width: 80%;
+            height: 4rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        .sidebar_info {
+            margin-left: 1rem;
+        }
+
+        .places {
+            width: 80%;
+            height: 5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            margin-left: 1rem;
+
+            display: flex;
+            .places_img {
+                height: 100%;
+                min-width: 5rem;
+                margin-right: 0.7rem;
+            }
+            .places_desc{
+                    overflow:hidden;
+                p {
+                    overflow:hidden;
+                    text-overflow: ellipsis;
+
+                    white-space: normal;
+                    font-size: 0.8rem;
+                    margin: 0.3rem 0 0.3rem 0;
+                }
+            }
+        }
+
+        .test-box {
+            height: 3000px;
+            width: 5%;
+            background-color: blue;
+        }
+}
+.open-sidebar {
+    left: 0rem;
+}
+.dimmer {
+    transition: all 0.3s ease;
+    display:none;
+}
+.set-dim {
+    display:block;
+    background:#000;
+    opacity:0.2;
+    position:fixed;
+    // lower than 1001(sidebar)
+    z-index: 1000;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+
+// upper 768
+
+@media (min-width: 768px) {
+    .Basic-body {
+        margin-left: $sidebar-width;
+    }
+}

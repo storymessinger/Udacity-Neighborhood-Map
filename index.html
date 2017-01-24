@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content='width=device-width', initial-scale=1.0, name='viewport', charset="UTF-8">
+    <title>Udacity Neighborhood Project</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,600,700" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/earlyaccess/jejugothic.css" rel="stylesheet">
+    <link rel="stylesheet" href="scss/normalize.css">
+    <link rel="stylesheet" href="scss/neighborhood.min.css">
+
+</head>
+<body>
+
+    <sidebar class="Basic-nav open-sidebar test">
+        <div class="sidebar_flex">
+            <div class="easyFilter test">
+                a
+            </div>
+            <p class="sidebar_info">Neighbors</p>
+            <div class="places test">
+                <div class="places_img test"></div>
+                <div class="places_desc">
+                    <p> title </p>
+                    <p> description blah blah </p>
+                </div>
+            </div>
+
+            <div class="test-box">
+            </div>
+        </div>
+
+    </sidebar>
+
+    <header class="test2">
+        <div class="sidebar_btn"></div>
+        <input type="text"></input>
+    </header>
+
+    <main class="Basic-body test test2">
+        <div class="dimmer"></div>
+
+        <div class="google-map" id="map"></div>
+
+    </main>
+
+
+
+    <script src="js/lib/jquery.min.js"></script>
+    <script src="js/lib/knockout-3.4.1.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+
+    <script async defer
+        src=
+        "https://maps.googleapis.com/maps/api/js?key=AIzaSyAXWT_uPQIuxP-10SQ5qYjVslLA-WmOmG4&libraries=geometry,drawing,directions,places&v=3&callback=loadMap&language=en">
+    </script>
+
+</body>
+</html>

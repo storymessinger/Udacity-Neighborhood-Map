@@ -88,6 +88,7 @@ sidebar {
                 height: 100%;
                 min-width: 5rem;
                 margin-right: 0.7rem;
+                background-color: orange;
             }
             .places_desc{
                     overflow:hidden;
@@ -101,21 +102,17 @@ sidebar {
                 }
             }
         }
-
-        .test-box {
-            height: 3000px;
-            width: 5%;
-            background-color: blue;
-        }
 }
-.open-sidebar {
+.open_sidebar {
     left: 0rem;
 }
+
 .dimmer {
     transition: all 0.3s ease;
     display:none;
 }
-.set-dim {
+
+.set_dim {
     display:block;
     background:#000;
     opacity:0.2;
@@ -133,5 +130,8 @@ sidebar {
 @media (min-width: 768px) {
     .Basic-body {
         margin-left: $sidebar-width;
+    }
+    sidebar {
+        left: 0rem;
     }
 }

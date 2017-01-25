@@ -64,7 +64,8 @@ sidebar {
         sidebar .places .places_img {
             height: 100%;
             min-width: 5rem;
-            margin-right: 0.7rem; }
+            margin-right: 0.7rem;
+            background-color: orange; }
         sidebar .places .places_desc {
             overflow: hidden; }
             sidebar .places .places_desc p {
@@ -73,19 +74,15 @@ sidebar {
                 white-space: normal;
                 font-size: 0.8rem;
                 margin: 0.3rem 0 0.3rem 0; }
-    sidebar .test-box {
-        height: 3000px;
-        width: 5%;
-        background-color: blue; }
 
-.open-sidebar {
+.open_sidebar {
     left: 0rem; }
 
 .dimmer {
     transition: all 0.3s ease;
     display: none; }
 
-.set-dim {
+.set_dim {
     display: block;
     background: #000;
     opacity: 0.2;
@@ -98,4 +95,6 @@ sidebar {
 
 @media (min-width: 768px) {
     .Basic-body {
-        margin-left: 15rem; } }
+        margin-left: 15rem; }
+    sidebar {
+        left: 0rem; } }

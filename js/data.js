@@ -1,4 +1,5 @@
-var markers = [
+var markers = [];
+var init_markers = [
     {
     address_components: [
         {

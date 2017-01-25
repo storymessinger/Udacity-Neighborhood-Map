@@ -12,33 +12,36 @@
 </head>
 <body>
 
-    <sidebar class="Basic-nav open-sidebar test">
+    <sidebar data-bind="css: { open_sidebar: sdFold() == true }" class="Basic-nav test">
         <div class="sidebar_flex">
             <div class="easyFilter test">
                 a
             </div>
             <p class="sidebar_info">Neighbors</p>
-            <div class="places test">
-                <div class="places_img test"></div>
-                <div class="places_desc">
-                    <p> title </p>
-                    <p> description blah blah </p>
-                </div>
-            </div>
 
-            <div class="test-box">
-            </div>
+            <div data-bind="template: {name:'marker', foreach:filterMarkers}"></div>
+            <script type="text/html" id="marker">
+                <div class="places test">
+                    <div class="places_img test"></div>
+                    <div class="places_desc">
+                        <p data-bind="text: title"></p>
+                        <!-- <p data-bind="text: "></p> -->
+                    </div>
+                </div>
+            </script>
+
         </div>
+        <button data-bind="click: ">test</button>
 
     </sidebar>
 
     <header class="test2">
-        <div class="sidebar_btn"></div>
-        <input type="text"></input>
+        <div data-bind="click: toggleClass_sd" class="sidebar_btn"></div>
+        <input placeholder="filter search" type="search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"></input>
     </header>
 
     <main class="Basic-body test test2">
-        <div class="dimmer"></div>
+        <div data-bind="click: toggleClass_sd, css: { set_dim: sdFold() == true }" class="dimmer"></div>
 
         <div class="google-map" id="map"></div>
 

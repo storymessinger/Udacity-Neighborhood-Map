@@ -29,15 +29,17 @@ function initMap() {
 
     // This makes bounding easier
     bounds = new google.maps.LatLngBounds();
-    // This autocomplete is for use in the geocoder entry box.
-    var zoomAutocomplete = new google.maps.places.Autocomplete(document.getElementById('searchInput'));
-    //Bias the boundaries within the map for the zoom to area text.
-    zoomAutocomplete.bindTo('bounds', map);
 
-    boundingMap(markers, true);
+    // DISABLED
+    // // This autocomplete is for use in the geocoder entry box.
+    // var zoomAutocomplete = new google.maps.places.Autocomplete(document.getElementById('searchInput'));
+    // //Bias the boundaries within the map for the zoom to area text.
+    // zoomAutocomplete.bindTo('bounds', map);
+
+    boundingMap(init_markers);
 }
 
-function boundingMap(markerGroup, isInit){
+function boundingMap(markerGroup){
     markerGroup.forEach(function(place){
         // Get the position from the location array.
         var position = place.geometry.location;
@@ -45,26 +47,24 @@ function boundingMap(markerGroup, isInit){
         //Extend the boundaries of the map
         bounds.extend(place.geometry.location);
 
-        if(isInit === true) {
-            //** Create a marker per location, and put into markers array.
-            markMarkers(position, title, largeInfowindow);
-        }
+        markMarkers(position, title, largeInfowindow);
     });
 
     map.fitBounds(bounds);
 }
 
 // marking the Markers with added functionalty of Event-trigger
-function markMarkers(location, title, Infowindow) {
+function markMarkers(position, title, Infowindow) {
 
     var thisInfowindow = Infowindow;
 
     var marker = new google.maps.Marker({
         map: map,
-        position: location,
+        position: position,
         title: title,
         animation: google.maps.Animation.DROP
     });
+    markers.push(marker);
 
     marker.addListener('click', function() {
         var self=this;
@@ -118,7 +118,56 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 
-
-function ViewModel(markers) {
-
+// This function will loop through the listings and hide them all.
+function hideListings() {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null);
+    }
 }
+
+function showListings(markerArr) {
+
+        bounds = new google.maps.LatLngBounds();
+
+        for (var i = 0; i < markerArr.length; i++) {
+          markers[i].setMap(map);
+          bounds.extend(markerArr[i].position);
+        }
+        map.fitBounds(bounds);
+}
+
+
+var ViewModel = function(Markers) {
+    var self = this;
+
+    
+
+    this.filterMarkers = ko.observableArray();
+    Markers.forEach(function(marker){
+        self.filterMarkers.push(marker);
+    });
+    this.query = ko.observable('');
+    this.filter = ko.computed(function(){
+        hideListings();
+        var value = self.query();
+
+        self.filterMarkers.removeAll();
+
+        Markers.forEach(function(marker){
+            if(marker.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                self.filterMarkers.push(marker);
+            }
+        });
+
+        showListings(self.filterMarkers());
+    });
+
+    this.sdFold = ko.observable(false);
+    this.toggleClass_sd = function(){
+        if(self.sdFold() === false) {
+            self.sdFold(true);
+        } else {
+            self.sdFold(false);
+        }
+    };
+};

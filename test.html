@@ -2,16 +2,32 @@
 <html lang="en">
 <head>
     <meta content='width=device-width', initial-scale=1.0, name='viewport', charset="UTF-8">
-    <title>test</title>
-    <link rel="stylesheet" href="scss/normalize.css">
 </head>
 <body>
-    <main>
-    </main>
-    <script src="js/lib/jquery.min.js"></script>
-    <script src="js/lib/knockout-3.4.1.js"></script>
-    <script src="js/data.js"></script>
-    <script src=js/test.js></script>
+
+<h2>People</h2>
+<ul data-bind="foreach: people">
+    <li>
+        <div>
+            <span data-bind="text: name"> </span> has <span data-bind='text: children().length'>&nbsp;</span> children:
+            <a href='#' data-bind='click: addChild '>Add child</a>
+            <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
+                (person rendered at <span data-bind='text: new Date().getSeconds()' > </span>)
+            </span>
+        </div>
+        <ul data-bind="foreach: children">
+            <li>
+                <span data-bind="text: $data"> </span>
+                <span class='renderTime' data-bind='visible: $root.showRenderTimes'>
+                    (child rendered at <span data-bind='text: new Date().getSeconds()' > </span>)
+                </span>
+            </li>
+        </ul>
+    </li>
+</ul>
+<label><input data-bind='checked: showRenderTimes' type='checkbox' /> Show render times</label>
 
 </body>
+<script src="js/lib/knockout-3.4.1.js"></script>
+<script src="js/test.js"></script>
 </html>

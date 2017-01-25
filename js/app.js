@@ -130,7 +130,7 @@ function showListings(markerArr) {
         bounds = new google.maps.LatLngBounds();
 
         for (var i = 0; i < markerArr.length; i++) {
-          markers[i].setMap(map);
+          markerArr[i].setMap(map);
           bounds.extend(markerArr[i].position);
         }
         map.fitBounds(bounds);
@@ -139,8 +139,6 @@ function showListings(markerArr) {
 
 var ViewModel = function(Markers) {
     var self = this;
-
-    
 
     this.filterMarkers = ko.observableArray();
     Markers.forEach(function(marker){

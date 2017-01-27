@@ -1,10 +1,3 @@
-.test {
-    border: 1px solid red;
-}
-.test2 {
-    background-color: purple;
-}
-
 // variables
 $sidebar-width: 15rem;
 
@@ -52,6 +45,25 @@ $sidebar-width: 15rem;
     width: 150px;
     height: 150px;
 }
+#daumResult {
+    @include card(1);
+    width: 11rem;
+    padding: 0.7rem;
+    margin-left: 1rem;
+    h4 {
+        margin-top: 0;
+        margin-bottom: 0.8rem;
+    }
+    .desc {
+        font-size: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+    a {
+        font-size: 0.8rem;
+        text-decoration: none;
+        color: orange;
+    }
+}
 html {
     font-size: 16px;
 }
@@ -74,11 +86,11 @@ body {
             height:30px;
         }
         input {
-            width:50px;
+            width:100px;
             transition: width 0.4s ease-in-out;
         }
         input:focus {
-            width: 200px;
+            width: 220px;
         }
     }
 
@@ -90,6 +102,11 @@ body {
             flex: 1;
         }
     }
+}
+
+// header
+header {
+    background-color: orange;
 }
 
 // navigation sidebar
@@ -149,15 +166,16 @@ sidebar {
             cursor: pointer;
             transition: all 0.5s ease;
             @include card(2);
-            width: 80%;
-            height: 5rem;
+            width: 12rem;
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
             margin-left: 1rem;
 
             display: flex;
+            flex-flow: row wrap;
             .places_img {
-                min-width: 90px;
+                height: 5rem;
+                min-width: 5rem;
                 position: relative;
                 overflow: hidden;
                 img {
@@ -169,6 +187,7 @@ sidebar {
                 }
             }
             .places_desc{
+                width: 6.3rem;
                 margin-left: 0.7rem;
                 overflow:hidden;
                 p {
@@ -179,6 +198,10 @@ sidebar {
                     font-size: 0.8rem;
                     margin: 0.3rem 0 0.3rem 0;
                 }
+            }
+            .places_daum {
+                width: 12rem;
+                padding: 0.5rem;
             }
         }
 }

@@ -30,15 +30,9 @@ function initMap() {
     // This makes bounding easier
     bounds = new google.maps.LatLngBounds();
 
-    // bound map - purple - western food
-    // boundingMap(init_markers, "purple");
-    // bound map - red - japanese food
-    // bound map - orange - korean food
-    // bound map - brown - beer and liquer
     boundingMap(European, "orange");
     boundingMap(Asian, "red");
     boundingMap(Beer, "brown");
-
 
     function boundingMap(markerGroup, color){
 
@@ -47,8 +41,9 @@ function initMap() {
             var title = place.name;
             var position = place.geometry.location;
             var photo = place.photo;
+            var types = place.types;
             bounds.extend(place.geometry.location);
-            markMarkers(position, title, photo, largeInfowindow, color);
+            markMarkers(position, title, photo, types, largeInfowindow, color);
         });
 
         map.fitBounds(bounds);
@@ -57,7 +52,7 @@ function initMap() {
 
 
 // marking the Markers with added functionalty of Event-trigger
-function markMarkers(position, title, photo, Infowindow, color) {
+function markMarkers(position, title, photo, types, Infowindow, color) {
 
     var thisInfowindow = Infowindow;
     var icon = "imgs/marker_" + color + ".png";
@@ -67,6 +62,7 @@ function markMarkers(position, title, photo, Infowindow, color) {
         position: position,
         title: title,
         photo: photo,
+        types: types,
         animation: google.maps.Animation.DROP,
         icon: icon,
     });
@@ -148,26 +144,55 @@ function showListings(markerArr) {
 var ViewModel = function(Markers) {
     var self = this;
 
+    // filter and Easy filter
     this.filterMarkers = ko.observableArray();
     Markers.forEach(function(marker){
         self.filterMarkers.push(marker);
     });
     this.query = ko.observable('');
+    this.query_type = ko.observable('');
+
     this.filter = ko.computed(function(){
+        //reset
         hideListings();
+        document.getElementById('daumResult').innerHTML = '';
+        //
+
         var value = self.query();
+        var value_type = self.query_type();
 
         self.filterMarkers.removeAll();
 
         Markers.forEach(function(marker){
-            if(marker.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                self.filterMarkers.push(marker);
+            if (value_type !== '') {
+                marker.types.forEach(function(markerType){
+                    if(markerType.toLowerCase() === value_type.toLowerCase()) {
+                        self.filterMarkers.push(marker);
+                    }
+                });
+            } else {
+                // check types
+                marker.types.forEach(function(markerType){
+                    if(markerType.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                        self.filterMarkers.push(marker);
+                    }
+                });
+                // check name(title)
+                if(marker.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                    self.filterMarkers.push(marker);
+                }
             }
         });
-
+        self.query_type('');
         showListings(self.filterMarkers());
     });
 
+    this.clickEasyFilter = function(data, event){
+        self.query_type(event.target.id);
+    };
+
+
+    ///sidebar Fol
     this.sdFold = ko.observable(false);
     this.toggleClass_sd = function(){
         if(self.sdFold() === false) {
@@ -178,8 +203,8 @@ var ViewModel = function(Markers) {
     };
 
 
-    this.clickSide = function(data){
-        console.log(data);
+    // sidebar click
+    this.clickSide = function(data, event){
 
         // show blog information from DAUM API
         self.getPlaceInfo_daum(data.title);
@@ -193,6 +218,7 @@ var ViewModel = function(Markers) {
 
     };
 
+    // Ajax request for 3rd party API
     this.getPlaceInfo_daum = function(search, cb) {
         var daumHTML;
 
@@ -204,22 +230,30 @@ var ViewModel = function(Markers) {
              // result: only one
              url: "https://apis.daum.net/search/blog?apikey=b77c955174086c502f96c40fb9cec076&sort=accu&result=2&q=" + search + "&output=json",
              success: function(daumResult, status) {
-                    var daumHTML;
-                    var resultNum;
+                var daumHTML;
 
-                    console.log(daumResult.channel.item[0].title);
+                // var title = decodeHtml(daumResult.channel.item[0].title);
+                var title = decodeHtml(daumResult.channel.item[0].title);
+                var desc = decodeHtml(daumResult.channel.item[0].description);
+                var link = decodeHtml(daumResult.channel.item[0].link);
 
-                    // if(daumResult[1].length === 0) {
-                    //     daumHTML = '<ul><li>' + 'no results from wiki' + '</li></ul>';
-                    //
-                    // } else {
-                    //     console.log(daumResult);
-                    //     daumHTML = '<ul>';
-                    //     daumHTML += "<br><li> (mediawiki results) </li>";
-                    //     daumHTML += '<li class="placeName"><h3>'+  daumResult[1][0] + '</h3></li>';
-                    //     daumHTML += '<li class="placeDesc">' + daumResult[2][0] + '</li>';
-                    //     daumHTML += '</ul>';
-                    // }
+                function decodeHtml(html) {
+                    var txt = document.createElement("textarea");
+                    txt.innerHTML = html;
+                    return txt.value;
+                }
+
+                if(daumResult.channel.result === 0) {
+                    daumHTML = "<div>" + "No results from Daum Search" + "</div>";
+                } else {
+                    daumHTML = "<div>";
+                    daumHTML += "<h4>"+ title +"</h4>";
+                    daumHTML += "<div class='desc'>"+ desc +"</div>";
+                    daumHTML += "<a href=" + link +">" + "click here for more";
+                    daumHTML += "</div>";
+                }
+
+                document.getElementById('daumResult').innerHTML = daumHTML;
 
                  if (cb) {
                      cb();
@@ -233,6 +267,6 @@ var ViewModel = function(Markers) {
                  }
              }
          });
-
     };
+
 };

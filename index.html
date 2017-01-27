@@ -14,15 +14,21 @@
 
     <sidebar data-bind="css: { open_sidebar: sdFold() == true }" class="Basic-nav test">
         <div class="sidebar_flex">
-            <div class="easyFilter test">
-                a
+            <p class="sidebar_info">Easy Filter</p>
+            <div class="easyFilter">
+                <div class="btnFilter">European Cusine</div>
+                <div class="btnFilter">Asian Cusine</div>
+                <div class="btnFilter">Beer and Drinks</div>
             </div>
             <p class="sidebar_info">Neighbors</p>
 
             <div data-bind="template: {name:'marker', foreach:filterMarkers}"></div>
             <script type="text/html" id="marker">
-                <div class="places test">
-                    <div class="places_img test"></div>
+                <div data-bind="click: $root.clickSide" class="places">
+                    <div class="places_img">
+                        <img data-bind="attr:{ src: photo }">
+                    </div>
+
                     <div class="places_desc">
                         <p data-bind="text: title"></p>
                         <!-- <p data-bind="text: "></p> -->

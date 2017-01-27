@@ -30,44 +30,52 @@ function initMap() {
     // This makes bounding easier
     bounds = new google.maps.LatLngBounds();
 
-    // DISABLED
-    // // This autocomplete is for use in the geocoder entry box.
-    // var zoomAutocomplete = new google.maps.places.Autocomplete(document.getElementById('searchInput'));
-    // //Bias the boundaries within the map for the zoom to area text.
-    // zoomAutocomplete.bindTo('bounds', map);
+    // bound map - purple - western food
+    // boundingMap(init_markers, "purple");
+    // bound map - red - japanese food
+    // bound map - orange - korean food
+    // bound map - brown - beer and liquer
+    boundingMap(European, "orange");
+    boundingMap(Asian, "red");
+    boundingMap(Beer, "brown");
 
-    boundingMap(init_markers);
+
+    function boundingMap(markerGroup, color){
+
+        markerGroup.forEach(function(place){
+
+            var title = place.name;
+            var position = place.geometry.location;
+            var photo = place.photo;
+            bounds.extend(place.geometry.location);
+            markMarkers(position, title, photo, largeInfowindow, color);
+        });
+
+        map.fitBounds(bounds);
+    }
 }
 
-function boundingMap(markerGroup){
-    markerGroup.forEach(function(place){
-        // Get the position from the location array.
-        var position = place.geometry.location;
-        var title = place.name;
-        //Extend the boundaries of the map
-        bounds.extend(place.geometry.location);
-
-        markMarkers(position, title, largeInfowindow);
-    });
-
-    map.fitBounds(bounds);
-}
 
 // marking the Markers with added functionalty of Event-trigger
-function markMarkers(position, title, Infowindow) {
+function markMarkers(position, title, photo, Infowindow, color) {
 
     var thisInfowindow = Infowindow;
+    var icon = "imgs/marker_" + color + ".png";
 
     var marker = new google.maps.Marker({
         map: map,
         position: position,
         title: title,
-        animation: google.maps.Animation.DROP
+        photo: photo,
+        animation: google.maps.Animation.DROP,
+        icon: icon,
     });
     markers.push(marker);
 
     marker.addListener('click', function() {
-        var self=this;
+        var self= this;
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){ marker.setAnimation(null); }, 1500);
         populateInfoWindow(self, thisInfowindow);
     });
 }
@@ -129,10 +137,10 @@ function showListings(markerArr) {
 
         bounds = new google.maps.LatLngBounds();
 
-        for (var i = 0; i < markerArr.length; i++) {
-          markerArr[i].setMap(map);
-          bounds.extend(markerArr[i].position);
-        }
+        markerArr.forEach(function(marker){
+            marker.setMap(map);
+            bounds.extend(marker.position);
+        });
         map.fitBounds(bounds);
 }
 
@@ -167,5 +175,64 @@ var ViewModel = function(Markers) {
         } else {
             self.sdFold(false);
         }
+    };
+
+
+    this.clickSide = function(data){
+        console.log(data);
+
+        // show blog information from DAUM API
+        self.getPlaceInfo_daum(data.title);
+
+        // animates the marker
+        var clickedMarker = Markers.find(function(marker){
+            return data.title == marker.title;
+        });
+        clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function(){ clickedMarker.setAnimation(null); }, 1500);
+
+    };
+
+    this.getPlaceInfo_daum = function(search, cb) {
+        var daumHTML;
+
+         $.ajax({
+             asnyc: true,
+             dataType: "jsonp",
+             type: "GET",
+             // sort: accuracy first
+             // result: only one
+             url: "https://apis.daum.net/search/blog?apikey=b77c955174086c502f96c40fb9cec076&sort=accu&result=2&q=" + search + "&output=json",
+             success: function(daumResult, status) {
+                    var daumHTML;
+                    var resultNum;
+
+                    console.log(daumResult.channel.item[0].title);
+
+                    // if(daumResult[1].length === 0) {
+                    //     daumHTML = '<ul><li>' + 'no results from wiki' + '</li></ul>';
+                    //
+                    // } else {
+                    //     console.log(daumResult);
+                    //     daumHTML = '<ul>';
+                    //     daumHTML += "<br><li> (mediawiki results) </li>";
+                    //     daumHTML += '<li class="placeName"><h3>'+  daumResult[1][0] + '</h3></li>';
+                    //     daumHTML += '<li class="placeDesc">' + daumResult[2][0] + '</li>';
+                    //     daumHTML += '</ul>';
+                    // }
+
+                 if (cb) {
+                     cb();
+                 }
+             },
+             error: function(result, status, err) {
+                 alert("error with connection from daum: " + status);
+                 //run only the callback without attempting to parse result due to error
+                 if (cb) {
+                     cb();
+                 }
+             }
+         });
+
     };
 };

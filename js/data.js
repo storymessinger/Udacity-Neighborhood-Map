@@ -1,14 +1,109 @@
 var markers = [];
+
+var European = [
+    {
+        name: "Santorini Restaurant",
+        geometry : {
+            location: {
+                lat: 37.534791,
+                lng: 126.992883
+            }
+        },
+        photo : "https://lh5.googleusercontent.com/-zTklvdD0JjU/V_DKLWrxmiI/AAAAAAAA_xc/fPntp7bgUaEkxtGpI68ddkENmDYe6sngACJkC/w200-h200-k/"
+    },
+    {
+        name: "Petra Restaurant",
+        geometry : {
+            location: {
+                lat: 37.53463189999999,
+                lng: 126.98768380000001
+            }
+        },
+        photo : "https://lh5.googleusercontent.com/-Upm2HPL2Ee8/WH9AybMdu6I/AAAAAAAAAAQ/ZdTi6WHWZEEFtHSwLs7TsPQVrk_CrCPvwCLIB/w200-h200-k/"
+    },
+    {
+        name: "Zelen Restaurant",
+        geometry : {
+            location: {
+                lat: 37.5350085,
+                lng: 126.99243960000001
+            }
+        },
+        photo : "https://lh5.googleusercontent.com/-imHbvL4G0bw/WF_Po5N5m9I/AAAAAAAAZP0/bgrlZAML_C8v92wJ8c9XSjFjpMx7S-xfwCLIB/w200-h200-k/"
+    }
+];
+
+var Asian = [
+    {
+        name: "Jonny Dumpling",
+        geometry : {
+            location: {
+                lat: 37.5338391,
+                lng: 126.99371050000002
+            }
+        },
+        photo : "https://lh3.googleusercontent.com/-vg6HAu6Jar4/VYAQAcDTqFI/AAAAAAAADAc/XIskBplrT9oId1Hgpahkfkzese2j6gUug/w200-h200-k/"
+    },
+    {
+        name: "Salam Restaurant",
+        geometry : {
+            location: {
+                lat: 37.53315039999999,
+                lng: 126.99755189999996
+            }
+        },
+        photo : "https://lh6.googleusercontent.com/-LNlvlIIWZlA/Ug9aVG5vNTI/AAAAAAAAAQ0/sQdIh0d3c_sXVLPevaYBPubOj8RDwRciQCJkC/w200-h200-k/"
+    },
+    {
+        name: "Buddah´s Belly",
+        geometry : {
+            location: {
+                lat: 37.5343875,
+                lng: 126.98837479999997
+            }
+        },
+        photo : "https://lh5.googleusercontent.com/-Ej5XmbVC6Ic/V390u6ZlW4I/AAAAAAAG3qM/Iob2RXoWAfEYapgbWieDyTW2JvNEWengQCJkC/w200-h200-k/"
+    },
+
+];
+
+var Beer = [
+    {
+        name: "3 Alley Pub Seoul",
+        geometry : {
+            location: {
+                lat: 37.534846,
+                lng: 126.99843499999997
+            }
+        },
+        photo : "https://lh6.googleusercontent.com/-fNzg2LwwF-g/VYQygu6jisI/AAAAAAAAAUo/Yh1cYxELGxAwYeTes14cljKrRjATqa1qQCJkC/w200-h200-k/"
+    },
+    {
+        name: "샘라이언스",
+        geometry : {
+            location: {
+                lat: 37.5350111,
+                lng: 126.99252460000002
+            }
+        },
+        photo : "https://lh3.googleusercontent.com/-rkM5CA5oHjE/VnuwF4ixXfI/AAAAAAAAoJc/TJ3-qIE5ytw0aPsJ0zm44CX0qT6rJDzFACJkC/w200-h200-k/"
+    },
+    {
+        name: "Wolf Hound",
+        geometry : {
+            location: {
+                lat: 37.5340214,
+                lng: 126.99343190000002
+            }
+        },
+        photo : "https://lh3.googleusercontent.com/-H11PvHKYvxw/WDGS4qK3-pI/AAAAAAABD64/bC5l94qnNZsMEAoJ-kggtD3rGxctzfiMgCLIB/w200-h200-k/"
+    },
+];
+
+
+
 var init_markers = [
     {
-    address_components: [
-        {
-            long_name: "9",
-            short_name: "9"
-        }
-    ],
-    formatted_address: "9 Marshall St, Soho, London W1F 7ER, UK",
-    place_id : "ChIJrdWi49QEdkgRHfSGuZRCJUM",
     name: "Masala Zone Soho",
     geometry : {
         location: {
@@ -16,16 +111,9 @@ var init_markers = [
             lng: -0.137900
         }
     },
-    types: ["bar","restaurant", "food"]
+    types: ["bar","restaurant", "food"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
 },  {
-    address_components: [
-        {
-            long_name: "73",
-            short_name: "73"
-        }
-    ],
-    formatted_address: "73 Strand, London WC2R 0DE, UK",
-    place_id : "ChIJmxZH4csEdkgR3Og1qwKoO0I",
     name: "Zizzi",
     geometry : {
         location: {
@@ -33,16 +121,9 @@ var init_markers = [
             lng: -0.122665
         }
     },
-    types: ["meal_takeaway", "restaurant", "food"]
+    types: ["meal_takeaway", "restaurant", "food"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
 },  {
-    address_components: [
-        {
-            long_name: "London",
-            short_name: "London"
-        }
-    ],
-    formatted_address: "Westminster, London SW1A 0AA, UK",
-    place_id : "ChIJ2dGMjMMEdkgRqVqkuXQkj7c",
     name: "Big Ben",
     geometry : {
         location: {
@@ -50,16 +131,9 @@ var init_markers = [
             lng: -0.124636
         }
     },
-    types: ["premise","point_of_interest","establishment"]
+    types: ["premise","point_of_interest","establishment"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
 }, {
-    address_components: [
-        {
-            long_name: "Trafalgar Square",
-            short_name: "Trafalgar Square"
-        }
-    ],
-    formatted_address: "Trafalgar Square, London WC2N 5DR, UK",
-    place_id : "ChIJhy-eTs4EdkgRjvVoQxhTSYg",
     name: "Charing Cross Underground Station",
     geometry : {
         location: {
@@ -67,16 +141,9 @@ var init_markers = [
             lng: -0.127428
         }
     },
-    types: ["subway_station","transit_station","point_of_interest","establishment"]
+    types: ["subway_station","transit_station","point_of_interest","establishment"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
 }, {
-    address_components: [
-        {
-            long_name:"Kensington Gore",
-            short_name: "Kensington Gore"
-        }
-    ],
-    formatted_address: "Kensington Gore, Kensington, London SW7 2EU, UK",
-    place_id : "ChIJM8PHBFsFdkgRFJMllTutvtg",
     name: "Royal College of Art",
     geometry : {
         location: {
@@ -84,16 +151,9 @@ var init_markers = [
             lng: -0.177372
         }
     },
-    types: ["university","point_of_interest","establishment"]
+    types: ["university","point_of_interest","establishment"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
 }, {
-    address_components: [
-        {
-            long_name:"London",
-            short_name: "London"
-        }
-    ],
-    formatted_address: "Lambeth, London SE1 7PB, UK",
-    place_id : "ChIJc2nSALkEdkgRkuoJJBfzkUI",
     name: 'London Eye',
     geometry : {
         location: {
@@ -101,16 +161,9 @@ var init_markers = [
             lng: -0.118959
         }
     },
-    types: ["point_of_interest","establishment"]
+    types: ["point_of_interest","establishment"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
 }, {
-    address_components: [
-        {
-            long_name:"Upper Ground",
-            short_name: "Upper Ground"
-        }
-    ],
-    formatted_address: "Upper Ground, South Bank, London SE1 9PX, UK",
-    place_id : "ChIJdYvbqaMEdkgRDdOt_IfsYRc",
     name: "National Theatre",
     geometry : {
         location: {
@@ -118,6 +171,7 @@ var init_markers = [
             lng: -0.114034
         }
     },
-    types: ["point_of_interest","establishment"]
+    types: ["point_of_interest","establishment"],
+    photo : "https://lh6.googleusercontent.com/-cd53j2frj6U/V9w1wpp-_kI/AAAAAAAAMHc/bbsJ_A4fm7MIEx8YJl65p7QoQ0xRwgQmACJkC/w80-h80-k/"
     }
 ];

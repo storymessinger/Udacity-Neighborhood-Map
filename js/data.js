@@ -10,6 +10,7 @@ var European = [
             }
         },
         types: ["European", "restaurant"],
+        place_id: "ChIJbws5L0yifDUR0HkP1G4JGdo",
         photo : "https://lh5.googleusercontent.com/-zTklvdD0JjU/V_DKLWrxmiI/AAAAAAAA_xc/fPntp7bgUaEkxtGpI68ddkENmDYe6sngACJkC/w200-h200-k/"
     },
     {
@@ -21,6 +22,7 @@ var European = [
             }
         },
         types: ["European", "restaurant"],
+        place_id: "ChIJZXyrwjeifDUR95WK4e_vnws",
         photo : "https://lh5.googleusercontent.com/-Upm2HPL2Ee8/WH9AybMdu6I/AAAAAAAAAAQ/ZdTi6WHWZEEFtHSwLs7TsPQVrk_CrCPvwCLIB/w200-h200-k/"
     },
     {
@@ -32,6 +34,7 @@ var European = [
             }
         },
         types: ["European", "restaurant"],
+        place_id: "ChIJW4TKJEqifDUR43sYfcRamhQ",
         photo : "https://lh5.googleusercontent.com/-imHbvL4G0bw/WF_Po5N5m9I/AAAAAAAAZP0/bgrlZAML_C8v92wJ8c9XSjFjpMx7S-xfwCLIB/w200-h200-k/"
     }
 ];
@@ -46,6 +49,7 @@ var Asian = [
             }
         },
         types: ["Asian", "restaurant"],
+        place_id: "ChIJuUpZb0qifDURhqMECCcxNso",
         photo : "https://lh3.googleusercontent.com/-vg6HAu6Jar4/VYAQAcDTqFI/AAAAAAAADAc/XIskBplrT9oId1Hgpahkfkzese2j6gUug/w200-h200-k/"
     },
     {
@@ -57,6 +61,7 @@ var Asian = [
             }
         },
         types: ["Asian", "restaurant"],
+        place_id: "ChIJfTdoMbWjfDURuyHTXw4e",
         photo : "https://lh6.googleusercontent.com/-LNlvlIIWZlA/Ug9aVG5vNTI/AAAAAAAAAQ0/sQdIh0d3c_sXVLPevaYBPubOj8RDwRciQCJkC/w200-h200-k/"
     },
     {
@@ -68,6 +73,7 @@ var Asian = [
             }
         },
         types: ["Asian", "restaurant"],
+        place_id: "ChIJ4xmzR0qifDURsNCrCcA2mac",
         photo : "https://lh5.googleusercontent.com/-Ej5XmbVC6Ic/V390u6ZlW4I/AAAAAAAG3qM/Iob2RXoWAfEYapgbWieDyTW2JvNEWengQCJkC/w200-h200-k/"
     },
 
@@ -83,6 +89,7 @@ var Beer = [
             }
         },
         types: ["Beer", "restaurant"],
+        place_id: "ChIJu2NElbSjfDURUEhBgpwJgxQ",
         photo : "https://lh6.googleusercontent.com/-fNzg2LwwF-g/VYQygu6jisI/AAAAAAAAAUo/Yh1cYxELGxAwYeTes14cljKrRjATqa1qQCJkC/w200-h200-k/"
     },
     {
@@ -94,6 +101,7 @@ var Beer = [
             }
         },
         types: ["Beer", "restaurant"],
+        place_id: "ChIJcYwFO0qifDURo-cW-MJq1qQ",
         photo : "https://lh3.googleusercontent.com/-rkM5CA5oHjE/VnuwF4ixXfI/AAAAAAAAoJc/TJ3-qIE5ytw0aPsJ0zm44CX0qT6rJDzFACJkC/w200-h200-k/"
     },
     {
@@ -105,6 +113,7 @@ var Beer = [
             }
         },
         types: ["Beer", "restaurant"],
+        place_id: "ChIJRc0UaUqifDURl-sjuSqHHzs",
         photo : "https://lh3.googleusercontent.com/-H11PvHKYvxw/WDGS4qK3-pI/AAAAAAABD64/bC5l94qnNZsMEAoJ-kggtD3rGxctzfiMgCLIB/w200-h200-k/"
     },
 ];

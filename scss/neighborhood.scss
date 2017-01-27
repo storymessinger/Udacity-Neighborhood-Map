@@ -45,7 +45,7 @@ $sidebar-width: 15rem;
     width: 150px;
     height: 150px;
 }
-#daumResult {
+#daumResult, #googleResult {
     @include card(1);
     width: 11rem;
     padding: 0.7rem;
@@ -123,6 +123,7 @@ sidebar {
         transition: left 0.15s ease-in;
 
         .easyFilter {
+            font-size: 0.8rem;
             width: 80%;
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;

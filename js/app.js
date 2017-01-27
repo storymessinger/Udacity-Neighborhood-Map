@@ -42,8 +42,9 @@ function initMap() {
             var position = place.geometry.location;
             var photo = place.photo;
             var types = place.types;
+            var place_id = place.place_id;
             bounds.extend(place.geometry.location);
-            markMarkers(position, title, photo, types, largeInfowindow, color);
+            markMarkers(position, title, photo, types, place_id, largeInfowindow, color);
         });
 
         map.fitBounds(bounds);
@@ -52,7 +53,7 @@ function initMap() {
 
 
 // marking the Markers with added functionalty of Event-trigger
-function markMarkers(position, title, photo, types, Infowindow, color) {
+function markMarkers(position, title, photo, types, place_id, Infowindow, color) {
 
     var thisInfowindow = Infowindow;
     var icon = "imgs/marker_" + color + ".png";
@@ -63,6 +64,7 @@ function markMarkers(position, title, photo, types, Infowindow, color) {
         title: title,
         photo: photo,
         types: types,
+        place_id: place_id,
         animation: google.maps.Animation.DROP,
         icon: icon,
     });
@@ -94,12 +96,13 @@ function populateInfoWindow(marker, infowindow) {
         // In case the status is OK, which means the pano was found, compute the
         // position of the streetview image, then calculate the heading, then get a
         // panorama from that and set the options
-        var getStreetView =function(data, status) {
+        var getInfo = function(data, status) {
+
             if (status == google.maps.StreetViewStatus.OK) {
                 var nearStreetViewLocation = data.location.latLng;
                 var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' +marker.title+ '</div><div id="pano"></div>');
 
+                infowindow.setContent('<div>' +marker.title+ '</div><div id="pano"></div>');
                 var panoramaOptions = {
                     position: nearStreetViewLocation,
                     pov: {
@@ -114,9 +117,10 @@ function populateInfoWindow(marker, infowindow) {
                     '<div>No Street View Found</div>');
             }
         };
+
         // Use streetview service to get the closest streetview image within
         // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+        streetViewService.getPanoramaByLocation(marker.position, radius, getInfo);
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
     }
@@ -171,12 +175,6 @@ var ViewModel = function(Markers) {
                     }
                 });
             } else {
-                // check types
-                marker.types.forEach(function(markerType){
-                    if(markerType.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-                        self.filterMarkers.push(marker);
-                    }
-                });
                 // check name(title)
                 if(marker.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
                     self.filterMarkers.push(marker);
@@ -208,6 +206,8 @@ var ViewModel = function(Markers) {
 
         // show blog information from DAUM API
         self.getPlaceInfo_daum(data.title);
+        // self.getPlaceInfo_google(data.place_id);
+        self.getPlaceInfo_google(data.place_id);
 
         // animates the marker
         var clickedMarker = Markers.find(function(marker){
@@ -216,6 +216,35 @@ var ViewModel = function(Markers) {
         clickedMarker.setAnimation(google.maps.Animation.BOUNCE);
         setTimeout(function(){ clickedMarker.setAnimation(null); }, 1500);
 
+    };
+
+    this.getPlaceInfo_google = function(place_id) {
+        var googleHTML;
+
+	    var service = new google.maps.places.PlacesService(map);
+	    service.getDetails({
+	        placeId: place_id,
+	    }, function(place, status) {
+	        if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+                googleHTML = "<div>";
+                if(place.rating) {
+                    googleHTML += "<h4>Rating: " + place.rating+ "</h4>";
+                }
+                if(place.reviews[0].text) {
+                    googleHTML += "<div class='desc'>Reviews: " + place.reviews[0].text+ "</div>";
+                }
+                if(place.international_phone_number) {
+                    googleHTML += "<div class='desc'>phone number: " + place.international_phone_number + "</div>";
+                }
+                googleHTML += "</div>";
+
+                document.getElementById('googleResult').innerHTML = googleHTML;
+
+	        } else {
+                 alert("error with connection from google API");
+            }
+        });
     };
 
     // Ajax request for 3rd party API

@@ -160,6 +160,7 @@ var ViewModel = function(Markers) {
         //reset
         hideListings();
         document.getElementById('daumResult').innerHTML = '';
+        document.getElementById('googleResult').innerHTML = '';
         //
 
         var value = self.query();

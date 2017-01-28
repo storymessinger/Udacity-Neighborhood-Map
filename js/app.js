@@ -74,18 +74,19 @@ function markMarkers(position, title, photo, types, place_id, Infowindow, color)
     });
     markers.push(marker);
 
-    marker.addListener('click', function() {
-        var self= this;
-        // marker animation bounce
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){ marker.setAnimation(null); }, 1400);
+    // marker.addListener('click', function() {
+    //     var self= this;
+    //     // marker animation bounce
+    //     marker.setAnimation(google.maps.Animation.BOUNCE);
+    //     setTimeout(function(){ marker.setAnimation(null); }, 1400);
+    //
+    //     populateInfoWindow(self, thisInfowindow);
+    //
+    //     // api info
+    //     getPlaceInfo_daum(marker.title);
+    //     getPlaceInfo_google(marker.place_id);
+    // });
 
-        populateInfoWindow(self, thisInfowindow);
-
-        // api info
-        getPlaceInfo_daum(marker.title);
-        getPlaceInfo_google(marker.place_id);
-    });
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -94,7 +95,6 @@ function markMarkers(position, title, photo, types, place_id, Infowindow, color)
 function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
-        console.log('not opened');
         // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
         infowindow.marker = marker;
@@ -159,18 +159,40 @@ function showListings(markerArr) {
 var ViewModel = function(Markers) {
     var self = this;
 
+    this.test = function(){
+        console.log('test succeed');
+    };
+
     // filter and Easy filter
     this.filterMarkers = ko.observableArray();
     Markers.forEach(function(marker){
+
+        marker.addListener('click', function() {
+            var self= this;
+            // marker animation bounce
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function(){ marker.setAnimation(null); }, 1400);
+
+            populateInfoWindow(self, largeInfowindow);
+
+            // api info
+            getPlaceInfo_daum(marker.title);
+            getPlaceInfo_google(marker.place_id);
+        });
+
         self.filterMarkers.push(marker);
     });
     this.query = ko.observable('');
     this.query_type = ko.observable('');
 
+    // this.daumResult = ko.observable('');
+    // this.googleResult = ko.observable('');
+
     this.filter = ko.computed(function(){
         //reset
         hideListings();
-        
+        // self.daumResult('');
+        // self.googleResult('');
         document.getElementById('daumResult').innerHTML = '';
         document.getElementById('googleResult').innerHTML = '';
 
@@ -178,21 +200,21 @@ var ViewModel = function(Markers) {
         largeInfowindow.marker = null;
         //
 
-        var value = self.query();
-        var value_type = self.query_type();
+        var valueOfName = self.query();
+        var valueOfType = self.query_type();
 
         self.filterMarkers.removeAll();
 
         Markers.forEach(function(marker){
-            if (value_type !== '') {
+            if (valueOfType !== '') {
                 marker.types.forEach(function(markerType){
-                    if(markerType.toLowerCase() === value_type.toLowerCase()) {
+                    if(markerType.toLowerCase() === valueOfType.toLowerCase()) {
                         self.filterMarkers.push(marker);
                     }
                 });
             } else {
                 // check name(title)
-                if(marker.title.toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+                if(marker.title.toLowerCase().indexOf(valueOfName.toLowerCase()) >= 0) {
                     self.filterMarkers.push(marker);
                 }
             }
@@ -219,6 +241,9 @@ var ViewModel = function(Markers) {
 
     // sidebar click
     this.clickSide = function(data, event){
+        // reset infowindow
+        largeInfowindow.close();
+        largeInfowindow.marker = null;
 
         // show blog information from DAUM API
         getPlaceInfo_daum(data.title);

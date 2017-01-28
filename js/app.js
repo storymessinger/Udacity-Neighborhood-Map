@@ -40,11 +40,24 @@ function initMap() {
 
             var title = place.name;
             var position = place.geometry.location;
+            bounds.extend(position);
             var photo = place.photo;
             var types = place.types;
             var place_id = place.place_id;
-            bounds.extend(place.geometry.location);
-            markMarkers(position, title, photo, types, place_id, largeInfowindow, color);
+            var icon = "imgs/marker_" + color + ".png";
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: position,
+                title: title,
+                photo: photo,
+                types: types,
+                place_id: place_id,
+                animation: google.maps.Animation.DROP,
+                icon: icon,
+            });
+
+            markers.push(marker);
         });
 
         //link below shows what event fires up when interacting with the google map
@@ -56,86 +69,50 @@ function initMap() {
 }
 
 
-// marking the Markers with added functionalty of Event-trigger
-function markMarkers(position, title, photo, types, place_id, Infowindow, color) {
-
-    var thisInfowindow = Infowindow;
-    var icon = "imgs/marker_" + color + ".png";
-
-    var marker = new google.maps.Marker({
-        map: map,
-        position: position,
-        title: title,
-        photo: photo,
-        types: types,
-        place_id: place_id,
-        animation: google.maps.Animation.DROP,
-        icon: icon,
-    });
-    markers.push(marker);
-
-    // marker.addListener('click', function() {
-    //     var self= this;
-    //     // marker animation bounce
-    //     marker.setAnimation(google.maps.Animation.BOUNCE);
-    //     setTimeout(function(){ marker.setAnimation(null); }, 1400);
-    //
-    //     populateInfoWindow(self, thisInfowindow);
-    //
-    //     // api info
-    //     getPlaceInfo_daum(marker.title);
-    //     getPlaceInfo_google(marker.place_id);
-    // });
-
-}
-
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow which will open at the marker that is clicked, and populate based
-// on that markers position.
-function populateInfoWindow(marker, infowindow) {
-    // Check to make sure the infowindow is not already opened on this marker.
-    if (infowindow.marker != marker) {
-        // Clear the infowindow content to give the streetview time to load.
-        infowindow.setContent('');
-        infowindow.marker = marker;
-        // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.addListener('closeclick', function() {
-            infowindow.marker = null;
-        });
-        var streetViewService = new google.maps.StreetViewService();
-        var radius = 50;
-        // In case the status is OK, which means the pano was found, compute the
-        // position of the streetview image, then calculate the heading, then get a
-        // panorama from that and set the options
-        var getInfo = function(data, status) {
-
-            if (status == google.maps.StreetViewStatus.OK) {
-                var nearStreetViewLocation = data.location.latLng;
-                var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-
-                infowindow.setContent('<div>' +marker.title+ '</div><div id="pano"></div>');
-                var panoramaOptions = {
-                    position: nearStreetViewLocation,
-                    pov: {
-                        heading: heading,
-                        pitch: 30
-                    }
-                };
-                var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-
-            } else {
-                infowindow.setContent('<div>' + marker.title + '</div>' +
-                    '<div>No Street View Found</div>');
-            }
-        };
-
-        // Use streetview service to get the closest streetview image within
-        // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getInfo);
-        // Open the infowindow on the correct marker.
-        infowindow.open(map, marker);
-    }
-}
+// function populateInfoWindow(marker, infowindow) {
+//     // Check to make sure the infowindow is not already opened on this marker.
+//     if (infowindow.marker != marker) {
+//         // Clear the infowindow content to give the streetview time to load.
+//         infowindow.setContent('');
+//         infowindow.marker = marker;
+//         // Make sure the marker property is cleared if the infowindow is closed.
+//         infowindow.addListener('closeclick', function() {
+//             infowindow.marker = null;
+//         });
+//         var streetViewService = new google.maps.StreetViewService();
+//         var radius = 50;
+//         // In case the status is OK, which means the pano was found, compute the
+//         // position of the streetview image, then calculate the heading, then get a
+//         // panorama from that and set the options
+//         var getInfo = function(data, status) {
+//
+//             if (status == google.maps.StreetViewStatus.OK) {
+//                 var nearStreetViewLocation = data.location.latLng;
+//                 var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+//
+//                 infowindow.setContent('<div>' +marker.title+ '</div><div id="pano"></div>');
+//                 var panoramaOptions = {
+//                     position: nearStreetViewLocation,
+//                     pov: {
+//                         heading: heading,
+//                         pitch: 30
+//                     }
+//                 };
+//                 var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+//
+//             } else {
+//                 infowindow.setContent('<div>' + marker.title + '</div>' +
+//                     '<div>No Street View Found</div>');
+//             }
+//         };
+//
+//         // Use streetview service to get the closest streetview image within
+//         // 50 meters of the markers position
+//         streetViewService.getPanoramaByLocation(marker.position, radius, getInfo);
+//         // Open the infowindow on the correct marker.
+//         infowindow.open(map, marker);
+//     }
+// }
 
 // This function will loop through the listings and hide them all.
 function hideListings() {
@@ -159,25 +136,21 @@ function showListings(markerArr) {
 var ViewModel = function(Markers) {
     var self = this;
 
-    this.test = function(){
-        console.log('test succeed');
-    };
-
     // filter and Easy filter
     this.filterMarkers = ko.observableArray();
     Markers.forEach(function(marker){
 
         marker.addListener('click', function() {
-            var self= this;
+            var that= this;
             // marker animation bounce
             marker.setAnimation(google.maps.Animation.BOUNCE);
             setTimeout(function(){ marker.setAnimation(null); }, 1400);
 
-            populateInfoWindow(self, largeInfowindow);
+            self.populateInfoWindow(that, largeInfowindow);
 
             // api info
-            getPlaceInfo_daum(marker.title);
-            getPlaceInfo_google(marker.place_id);
+            self.getPlaceInfo_daum(marker.title);
+            self.getPlaceInfo_google(marker.place_id);
         });
 
         self.filterMarkers.push(marker);
@@ -185,17 +158,14 @@ var ViewModel = function(Markers) {
     this.query = ko.observable('');
     this.query_type = ko.observable('');
 
-    // this.daumResult = ko.observable('');
-    // this.googleResult = ko.observable('');
+    this.daumResult = ko.observable('');
+    this.googleResult = ko.observable('');
 
     this.filter = ko.computed(function(){
         //reset
         hideListings();
-        // self.daumResult('');
-        // self.googleResult('');
-        document.getElementById('daumResult').innerHTML = '';
-        document.getElementById('googleResult').innerHTML = '';
-
+        self.daumResult('');
+        self.googleResult('');
         largeInfowindow.close();
         largeInfowindow.marker = null;
         //
@@ -246,8 +216,8 @@ var ViewModel = function(Markers) {
         largeInfowindow.marker = null;
 
         // show blog information from DAUM API
-        getPlaceInfo_daum(data.title);
-        getPlaceInfo_google(data.place_id);
+        self.getPlaceInfo_daum(data.title);
+        self.getPlaceInfo_google(data.place_id);
 
         // animates the marker
         var clickedMarker = Markers.find(function(marker){
@@ -258,84 +228,127 @@ var ViewModel = function(Markers) {
 
     };
 
+    this.getPlaceInfo_google = function(place_id) {
+        var googleHTML;
+
+        var service = new google.maps.places.PlacesService(map);
+        service.getDetails({
+            placeId: place_id,
+        }, function(place, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+                googleHTML = "<div>";
+                if(place.rating) {
+                    googleHTML += "<h4>Rating: " + place.rating+ "</h4>";
+                }
+                if(place.reviews[0].text) {
+                    googleHTML += "<div class='desc'>Reviews: " + place.reviews[0].text+ "</div>";
+                }
+                if(place.international_phone_number) {
+                    googleHTML += "<div class='desc'>phone number: " + place.international_phone_number + "</div>";
+                }
+                googleHTML += "</div>";
+
+                self.googleResult(googleHTML);
+
+            } else {
+                 alert("error with connection from google API: " + status);
+            }
+        });
+    };
+
+    // Ajax request for 3rd party API
+    this.getPlaceInfo_daum = function(search, cb) {
+        var daumHTML;
+
+         $.ajax({
+             dataType: "jsonp",
+             type: "GET",
+             // sort: accuracy first
+             // result: only one
+             url: "https://apis.daum.net/search/blog?apikey=b77c955174086c502f96c40fb9cec076&sort=accu&result=2&q=" + search + "&output=json",
+             success: function(daumResult, status) {
+                var daumHTML;
+
+                // var title = decodeHtml(daumResult.channel.item[0].title);
+                var title = decodeHtml(daumResult.channel.item[0].title);
+                var desc = decodeHtml(daumResult.channel.item[0].description);
+                var link = decodeHtml(daumResult.channel.item[0].link);
+
+                function decodeHtml(html) {
+                    var txt = document.createElement("textarea");
+                    txt.innerHTML = html;
+                    return txt.value;
+                }
+
+                if(daumResult.channel.result === 0) {
+                    daumHTML = "<div>" + "No results from Daum Search" + "</div>";
+                } else {
+                    daumHTML = "<div>";
+                    daumHTML += "<h4>"+ title +"</h4>";
+                    daumHTML += "<div class='desc'>"+ desc +"</div>";
+                    daumHTML += "<a href=" + link +">" + "click here for more";
+                    daumHTML += "</div>";
+                }
+
+                self.daumResult(daumHTML);
+
+                 if (cb) {
+                     cb();
+                 }
+             },
+             error: function(result, status, err) {
+                 alert("error with connection from daum: " + status);
+                 //run only the callback without attempting to parse result due to error
+                 if (cb) {
+                     cb();
+                 }
+             }
+         });
+    };
+    this.populateInfoWindow = function(marker, infowindow) {
+        // Check to make sure the infowindow is not already opened on this marker.
+        if (infowindow.marker != marker) {
+            // Clear the infowindow content to give the streetview time to load.
+            infowindow.setContent('');
+            infowindow.marker = marker;
+            // Make sure the marker property is cleared if the infowindow is closed.
+            infowindow.addListener('closeclick', function() {
+                infowindow.marker = null;
+            });
+            var streetViewService = new google.maps.StreetViewService();
+            var radius = 50;
+            // In case the status is OK, which means the pano was found, compute the
+            // position of the streetview image, then calculate the heading, then get a
+            // panorama from that and set the options
+            var getInfo = function(data, status) {
+
+                if (status == google.maps.StreetViewStatus.OK) {
+                    var nearStreetViewLocation = data.location.latLng;
+                    var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+
+                    infowindow.setContent('<div>' +marker.title+ '</div><div id="pano"></div>');
+                    var panoramaOptions = {
+                        position: nearStreetViewLocation,
+                        pov: {
+                            heading: heading,
+                            pitch: 30
+                        }
+                    };
+                    var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+
+                } else {
+                    infowindow.setContent('<div>' + marker.title + '</div>' +
+                        '<div>No Street View Found</div>');
+                }
+            };
+
+            // Use streetview service to get the closest streetview image within
+            // 50 meters of the markers position
+            streetViewService.getPanoramaByLocation(marker.position, radius, getInfo);
+            // Open the infowindow on the correct marker.
+            infowindow.open(map, marker);
+        }
+    };
 
 };
-
-function getPlaceInfo_google(place_id) {
-    var googleHTML;
-
-    var service = new google.maps.places.PlacesService(map);
-    service.getDetails({
-        placeId: place_id,
-    }, function(place, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-
-            googleHTML = "<div>";
-            if(place.rating) {
-                googleHTML += "<h4>Rating: " + place.rating+ "</h4>";
-            }
-            if(place.reviews[0].text) {
-                googleHTML += "<div class='desc'>Reviews: " + place.reviews[0].text+ "</div>";
-            }
-            if(place.international_phone_number) {
-                googleHTML += "<div class='desc'>phone number: " + place.international_phone_number + "</div>";
-            }
-            googleHTML += "</div>";
-
-            document.getElementById('googleResult').innerHTML = googleHTML;
-
-        } else {
-             alert("error with connection from google API: " + status);
-        }
-    });
-}
-
-// Ajax request for 3rd party API
-function getPlaceInfo_daum(search, cb) {
-    var daumHTML;
-
-     $.ajax({
-         dataType: "jsonp",
-         type: "GET",
-         // sort: accuracy first
-         // result: only one
-         url: "https://apis.daum.net/search/blog?apikey=b77c955174086c502f96c40fb9cec076&sort=accu&result=2&q=" + search + "&output=json",
-         success: function(daumResult, status) {
-            var daumHTML;
-
-            // var title = decodeHtml(daumResult.channel.item[0].title);
-            var title = decodeHtml(daumResult.channel.item[0].title);
-            var desc = decodeHtml(daumResult.channel.item[0].description);
-            var link = decodeHtml(daumResult.channel.item[0].link);
-
-            function decodeHtml(html) {
-                var txt = document.createElement("textarea");
-                txt.innerHTML = html;
-                return txt.value;
-            }
-
-            if(daumResult.channel.result === 0) {
-                daumHTML = "<div>" + "No results from Daum Search" + "</div>";
-            } else {
-                daumHTML = "<div>";
-                daumHTML += "<h4>"+ title +"</h4>";
-                daumHTML += "<div class='desc'>"+ desc +"</div>";
-                daumHTML += "<a href=" + link +">" + "click here for more";
-                daumHTML += "</div>";
-            }
-
-            document.getElementById('daumResult').innerHTML = daumHTML;
-
-             if (cb) {
-                 cb();
-             }
-         },
-         error: function(result, status, err) {
-             alert("error with connection from daum: " + status);
-             //run only the callback without attempting to parse result due to error
-             if (cb) {
-                 cb();
-             }
-         }
-     });
-}

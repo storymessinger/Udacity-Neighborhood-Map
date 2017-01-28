@@ -114,27 +114,29 @@ function initMap() {
 //     }
 // }
 
-// This function will loop through the listings and hide them all.
-function hideListings() {
-    for (var i = 0; i < markers.length; i++) {
-      markers[i].setVisible(false);
-    }
-}
-
-function showListings(markerArr) {
-
-        bounds = new google.maps.LatLngBounds();
-
-        markerArr.forEach(function(marker){
-            marker.setVisible(true);
-            bounds.extend(marker.position);
-        });
-        map.fitBounds(bounds);
-}
 
 
 var ViewModel = function(Markers) {
     var self = this;
+
+    // This function will loop through the listings and hide them all.
+    this.hideListings = function() {
+        for (var i = 0; i < Markers.length; i++) {
+          Markers[i].setVisible(false);
+        }
+    };
+
+    this.showListings = function(markerArr) {
+
+            bounds = new google.maps.LatLngBounds();
+
+            markerArr.forEach(function(item){
+                item.setVisible(true);
+                bounds.extend(item.position);
+            });
+            map.fitBounds(bounds);
+    };
+
 
     // filter and Easy filter
     this.filterMarkers = ko.observableArray();
@@ -163,7 +165,7 @@ var ViewModel = function(Markers) {
 
     this.filter = ko.computed(function(){
         //reset
-        hideListings();
+        self.hideListings();
         self.daumResult('');
         self.googleResult('');
         largeInfowindow.close();
@@ -190,15 +192,15 @@ var ViewModel = function(Markers) {
             }
         });
         self.query_type('');
-        showListings(self.filterMarkers());
+        self.showListings(self.filterMarkers());
     });
-
     this.clickEasyFilter = function(data, event){
         self.query_type(event.target.id);
     };
 
 
-    ///sidebar Fol
+
+    ///sidebar Fold
     this.sdFold = ko.observable(false);
     this.toggleClass_sd = function(){
         if(self.sdFold() === false) {
@@ -228,6 +230,8 @@ var ViewModel = function(Markers) {
 
     };
 
+
+    // get information
     this.getPlaceInfo_google = function(place_id) {
         var googleHTML;
 
@@ -306,6 +310,8 @@ var ViewModel = function(Markers) {
              }
          });
     };
+
+    // populate window info
     this.populateInfoWindow = function(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
         if (infowindow.marker != marker) {
@@ -350,5 +356,6 @@ var ViewModel = function(Markers) {
             infowindow.open(map, marker);
         }
     };
+
 
 };

@@ -30,9 +30,9 @@ function initMap() {
     // This makes bounding easier
     bounds = new google.maps.LatLngBounds();
 
-    boundingMap(European, "orange");
-    boundingMap(Asian, "red");
-    boundingMap(Beer, "brown");
+    boundingMap(European, 'orange');
+    boundingMap(Asian, 'red');
+    boundingMap(Beer, 'brown');
 
     function boundingMap(markerGroup, color){
 
@@ -47,7 +47,11 @@ function initMap() {
             markMarkers(position, title, photo, types, place_id, largeInfowindow, color);
         });
 
-        map.fitBounds(bounds);
+        //link below shows what event fires up when interacting with the google map
+        //https://developers.google.com/maps/documentation/javascript/events?hl=ko
+        google.maps.event.addDomListener(window, 'resize', function() {
+            map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
+        });
     }
 }
 
@@ -206,7 +210,7 @@ var ViewModel = function(Markers) {
     this.clickSide = function(data, event){
 
         // show blog information from DAUM API
-        self.getPlaceInfo_daum(data.title);
+        getPlaceInfo_daum(data.title);
         // self.getPlaceInfo_google(data.place_id);
         self.getPlaceInfo_google(data.place_id);
 
@@ -248,8 +252,10 @@ var ViewModel = function(Markers) {
         });
     };
 
+};
+
     // Ajax request for 3rd party API
-    this.getPlaceInfo_daum = function(search, cb) {
+    getPlaceInfo_daum = function(search, cb) {
         var daumHTML;
 
          $.ajax({
@@ -298,5 +304,3 @@ var ViewModel = function(Markers) {
              }
          });
     };
-
-};

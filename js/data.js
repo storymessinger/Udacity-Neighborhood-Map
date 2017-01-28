@@ -61,7 +61,7 @@ var Asian = [
             }
         },
         types: ["Asian", "restaurant"],
-        place_id: "ChIJfTdoMbWjfDURuyHTXw4e",
+        place_id: "ChIJfTdoMbWjfDURuyHTXw4e-xY",
         photo : "https://lh6.googleusercontent.com/-LNlvlIIWZlA/Ug9aVG5vNTI/AAAAAAAAAQ0/sQdIh0d3c_sXVLPevaYBPubOj8RDwRciQCJkC/w200-h200-k/"
     },
     {

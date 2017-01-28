@@ -76,9 +76,15 @@ function markMarkers(position, title, photo, types, place_id, Infowindow, color)
 
     marker.addListener('click', function() {
         var self= this;
+        // marker animation bounce
         marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(function(){ marker.setAnimation(null); }, 1500);
+        setTimeout(function(){ marker.setAnimation(null); }, 1400);
+
         populateInfoWindow(self, thisInfowindow);
+
+        // api info
+        getPlaceInfo_daum(marker.title);
+        getPlaceInfo_google(marker.place_id);
     });
 }
 
@@ -88,6 +94,7 @@ function markMarkers(position, title, photo, types, place_id, Infowindow, color)
 function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
+        console.log('not opened');
         // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
         infowindow.marker = marker;
@@ -133,7 +140,7 @@ function populateInfoWindow(marker, infowindow) {
 // This function will loop through the listings and hide them all.
 function hideListings() {
     for (var i = 0; i < markers.length; i++) {
-      markers[i].setMap(null);
+      markers[i].setVisible(false);
     }
 }
 
@@ -142,7 +149,7 @@ function showListings(markerArr) {
         bounds = new google.maps.LatLngBounds();
 
         markerArr.forEach(function(marker){
-            marker.setMap(map);
+            marker.setVisible(true);
             bounds.extend(marker.position);
         });
         map.fitBounds(bounds);
@@ -163,8 +170,12 @@ var ViewModel = function(Markers) {
     this.filter = ko.computed(function(){
         //reset
         hideListings();
+        
         document.getElementById('daumResult').innerHTML = '';
         document.getElementById('googleResult').innerHTML = '';
+
+        largeInfowindow.close();
+        largeInfowindow.marker = null;
         //
 
         var value = self.query();
@@ -211,8 +222,7 @@ var ViewModel = function(Markers) {
 
         // show blog information from DAUM API
         getPlaceInfo_daum(data.title);
-        // self.getPlaceInfo_google(data.place_id);
-        self.getPlaceInfo_google(data.place_id);
+        getPlaceInfo_google(data.place_id);
 
         // animates the marker
         var clickedMarker = Markers.find(function(marker){
@@ -223,84 +233,84 @@ var ViewModel = function(Markers) {
 
     };
 
-    this.getPlaceInfo_google = function(place_id) {
-        var googleHTML;
-
-	    var service = new google.maps.places.PlacesService(map);
-	    service.getDetails({
-	        placeId: place_id,
-	    }, function(place, status) {
-	        if (status === google.maps.places.PlacesServiceStatus.OK) {
-
-                googleHTML = "<div>";
-                if(place.rating) {
-                    googleHTML += "<h4>Rating: " + place.rating+ "</h4>";
-                }
-                if(place.reviews[0].text) {
-                    googleHTML += "<div class='desc'>Reviews: " + place.reviews[0].text+ "</div>";
-                }
-                if(place.international_phone_number) {
-                    googleHTML += "<div class='desc'>phone number: " + place.international_phone_number + "</div>";
-                }
-                googleHTML += "</div>";
-
-                document.getElementById('googleResult').innerHTML = googleHTML;
-
-	        } else {
-                 alert("error with connection from google API");
-            }
-        });
-    };
 
 };
 
-    // Ajax request for 3rd party API
-    getPlaceInfo_daum = function(search, cb) {
-        var daumHTML;
+function getPlaceInfo_google(place_id) {
+    var googleHTML;
 
-         $.ajax({
-             asnyc: true,
-             dataType: "jsonp",
-             type: "GET",
-             // sort: accuracy first
-             // result: only one
-             url: "https://apis.daum.net/search/blog?apikey=b77c955174086c502f96c40fb9cec076&sort=accu&result=2&q=" + search + "&output=json",
-             success: function(daumResult, status) {
-                var daumHTML;
+    var service = new google.maps.places.PlacesService(map);
+    service.getDetails({
+        placeId: place_id,
+    }, function(place, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
 
-                // var title = decodeHtml(daumResult.channel.item[0].title);
-                var title = decodeHtml(daumResult.channel.item[0].title);
-                var desc = decodeHtml(daumResult.channel.item[0].description);
-                var link = decodeHtml(daumResult.channel.item[0].link);
+            googleHTML = "<div>";
+            if(place.rating) {
+                googleHTML += "<h4>Rating: " + place.rating+ "</h4>";
+            }
+            if(place.reviews[0].text) {
+                googleHTML += "<div class='desc'>Reviews: " + place.reviews[0].text+ "</div>";
+            }
+            if(place.international_phone_number) {
+                googleHTML += "<div class='desc'>phone number: " + place.international_phone_number + "</div>";
+            }
+            googleHTML += "</div>";
 
-                function decodeHtml(html) {
-                    var txt = document.createElement("textarea");
-                    txt.innerHTML = html;
-                    return txt.value;
-                }
+            document.getElementById('googleResult').innerHTML = googleHTML;
 
-                if(daumResult.channel.result === 0) {
-                    daumHTML = "<div>" + "No results from Daum Search" + "</div>";
-                } else {
-                    daumHTML = "<div>";
-                    daumHTML += "<h4>"+ title +"</h4>";
-                    daumHTML += "<div class='desc'>"+ desc +"</div>";
-                    daumHTML += "<a href=" + link +">" + "click here for more";
-                    daumHTML += "</div>";
-                }
+        } else {
+             alert("error with connection from google API: " + status);
+        }
+    });
+}
 
-                document.getElementById('daumResult').innerHTML = daumHTML;
+// Ajax request for 3rd party API
+function getPlaceInfo_daum(search, cb) {
+    var daumHTML;
 
-                 if (cb) {
-                     cb();
-                 }
-             },
-             error: function(result, status, err) {
-                 alert("error with connection from daum: " + status);
-                 //run only the callback without attempting to parse result due to error
-                 if (cb) {
-                     cb();
-                 }
+     $.ajax({
+         dataType: "jsonp",
+         type: "GET",
+         // sort: accuracy first
+         // result: only one
+         url: "https://apis.daum.net/search/blog?apikey=b77c955174086c502f96c40fb9cec076&sort=accu&result=2&q=" + search + "&output=json",
+         success: function(daumResult, status) {
+            var daumHTML;
+
+            // var title = decodeHtml(daumResult.channel.item[0].title);
+            var title = decodeHtml(daumResult.channel.item[0].title);
+            var desc = decodeHtml(daumResult.channel.item[0].description);
+            var link = decodeHtml(daumResult.channel.item[0].link);
+
+            function decodeHtml(html) {
+                var txt = document.createElement("textarea");
+                txt.innerHTML = html;
+                return txt.value;
+            }
+
+            if(daumResult.channel.result === 0) {
+                daumHTML = "<div>" + "No results from Daum Search" + "</div>";
+            } else {
+                daumHTML = "<div>";
+                daumHTML += "<h4>"+ title +"</h4>";
+                daumHTML += "<div class='desc'>"+ desc +"</div>";
+                daumHTML += "<a href=" + link +">" + "click here for more";
+                daumHTML += "</div>";
+            }
+
+            document.getElementById('daumResult').innerHTML = daumHTML;
+
+             if (cb) {
+                 cb();
              }
-         });
-    };
+         },
+         error: function(result, status, err) {
+             alert("error with connection from daum: " + status);
+             //run only the callback without attempting to parse result due to error
+             if (cb) {
+                 cb();
+             }
+         }
+     });
+}

@@ -68,54 +68,6 @@ function initMap() {
     }
 }
 
-
-// function populateInfoWindow(marker, infowindow) {
-//     // Check to make sure the infowindow is not already opened on this marker.
-//     if (infowindow.marker != marker) {
-//         // Clear the infowindow content to give the streetview time to load.
-//         infowindow.setContent('');
-//         infowindow.marker = marker;
-//         // Make sure the marker property is cleared if the infowindow is closed.
-//         infowindow.addListener('closeclick', function() {
-//             infowindow.marker = null;
-//         });
-//         var streetViewService = new google.maps.StreetViewService();
-//         var radius = 50;
-//         // In case the status is OK, which means the pano was found, compute the
-//         // position of the streetview image, then calculate the heading, then get a
-//         // panorama from that and set the options
-//         var getInfo = function(data, status) {
-//
-//             if (status == google.maps.StreetViewStatus.OK) {
-//                 var nearStreetViewLocation = data.location.latLng;
-//                 var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-//
-//                 infowindow.setContent('<div>' +marker.title+ '</div><div id="pano"></div>');
-//                 var panoramaOptions = {
-//                     position: nearStreetViewLocation,
-//                     pov: {
-//                         heading: heading,
-//                         pitch: 30
-//                     }
-//                 };
-//                 var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-//
-//             } else {
-//                 infowindow.setContent('<div>' + marker.title + '</div>' +
-//                     '<div>No Street View Found</div>');
-//             }
-//         };
-//
-//         // Use streetview service to get the closest streetview image within
-//         // 50 meters of the markers position
-//         streetViewService.getPanoramaByLocation(marker.position, radius, getInfo);
-//         // Open the infowindow on the correct marker.
-//         infowindow.open(map, marker);
-//     }
-// }
-
-
-
 var ViewModel = function(Markers) {
     var self = this;
 
@@ -151,8 +103,8 @@ var ViewModel = function(Markers) {
             self.populateInfoWindow(that, largeInfowindow);
 
             // api info
-            self.getPlaceInfo_daum(marker.title);
-            self.getPlaceInfo_google(marker.place_id);
+            self.getInfoDaum(marker.title);
+            self.getInfoGoogle(marker.place_id);
         });
 
         self.filterMarkers.push(marker);
@@ -218,8 +170,8 @@ var ViewModel = function(Markers) {
         largeInfowindow.marker = null;
 
         // show blog information from DAUM API
-        self.getPlaceInfo_daum(data.title);
-        self.getPlaceInfo_google(data.place_id);
+        self.getInfoDaum(data.title);
+        self.getInfoGoogle(data.place_id);
 
         // animates the marker
         var clickedMarker = Markers.find(function(marker){
@@ -232,7 +184,7 @@ var ViewModel = function(Markers) {
 
 
     // get information
-    this.getPlaceInfo_google = function(place_id) {
+    this.getInfoGoogle = function(place_id) {
         var googleHTML;
 
         var service = new google.maps.places.PlacesService(map);
@@ -241,16 +193,23 @@ var ViewModel = function(Markers) {
         }, function(place, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
 
+                // ( condition ) ? (if true then) : (if false then)
+                // response.rating ? rating = response.rating : rating = 'No rating available';
+
                 googleHTML = "<div>";
-                if(place.rating) {
-                    googleHTML += "<h4>Rating: " + place.rating+ "</h4>";
-                }
-                if(place.reviews[0].text) {
-                    googleHTML += "<div class='desc'>Reviews: " + place.reviews[0].text+ "</div>";
-                }
-                if(place.international_phone_number) {
-                    googleHTML += "<div class='desc'>phone number: " + place.international_phone_number + "</div>";
-                }
+
+                (place.rating !== undefined)
+                    ? googleHTML += '<h4>Rating: ' + place.rating+ '</h4>'
+                    : googleHTML += '<h4 class="notFound">No Rating Found</h4>';
+
+                (place.reviews[0].text !== undefined)
+                    ? googleHTML += '<div class="desc">Reviews: ' + place.reviews[0].text+ '</div>'
+                    : googleHTML += '<div class="desc notFound">No Reviews Found</div>';
+
+                (place.international_phone_number !== undefined)
+                    ? googleHTML += '<div class="desc">phone number: ' + place.international_phone_number + '</div>'
+                    : googleHTML += '<div class="desc notFound">No Phone Number Found</div>';
+
                 googleHTML += "</div>";
 
                 self.googleResult(googleHTML);
@@ -262,7 +221,7 @@ var ViewModel = function(Markers) {
     };
 
     // Ajax request for 3rd party API
-    this.getPlaceInfo_daum = function(search, cb) {
+    this.getInfoDaum = function(search, cb) {
         var daumHTML;
 
          $.ajax({
@@ -289,9 +248,11 @@ var ViewModel = function(Markers) {
                     daumHTML = "<div>" + "No results from Daum Search" + "</div>";
                 } else {
                     daumHTML = "<div>";
+
                     daumHTML += "<h4>"+ title +"</h4>";
                     daumHTML += "<div class='desc'>"+ desc +"</div>";
                     daumHTML += "<a href=" + link +">" + "click here for more";
+
                     daumHTML += "</div>";
                 }
 
@@ -311,7 +272,6 @@ var ViewModel = function(Markers) {
          });
     };
 
-    // populate window info
     this.populateInfoWindow = function(marker, infowindow) {
         // Check to make sure the infowindow is not already opened on this marker.
         if (infowindow.marker != marker) {
